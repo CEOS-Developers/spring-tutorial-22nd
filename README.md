@@ -1,6 +1,6 @@
 # spring-tutorial-22nd
 
-## 2️⃣ spring이 지원하는 기술들(IoC/DI, AOP, PSA 등)
+## spring이 지원하는 기술들(IoC/DI, AOP, PSA 등)
 
 ### IoC/DI
 
@@ -56,3 +56,30 @@ public class Cafe{
 `@RequiredArgsConstructor`: 필수 인자를 가진 생성자를 자동으로 생성해주는 Lombok에서 제공하는 어노테이션이다. 해당 어노테이션이 붙을 경우, final 필드나 @NonNull 어노테이션이 붙은 필드에 대한 생성자를 자동으로 생성해준다.
 
 공식문서 : https://projectlombok.org/api/lombok/RequiredArgsConstructor
+
+### AOP (Aspect Oriented Programming)
+: 관점 지향 프로그래밍으로, 객체를 기준으로 하는 OOP와 달리, 관점을 기준으로 기능들을 분리하는 프로그래밍 기법이다. 여기서 관점(Aspect)이란, 여러 객체에 공통적으로 사용되는 기능들(-> 이를 횡단관심사 라 한다)을 분리하여 모듈화한 단위이다.
+
+그렇다면 이미 OOP 방식이 있는데, AOP 방식이 왜 필요한걸까?
+1. 횡단 관심사를 모듈화하여 코드 중복을 줄일 수 있다.
+2. 비즈니스 로직과 공통된 로직을 분리하여 가독성, 유지보수성이 향상된다.
+3. 후에 모듈을 수정해야할 때 한 곳에서만 수정하면 된다.
+
+중요한 건 AOP는 OOP를 대체하는 게 아닌 보완하는 방식으로, OOP로는 클래스 단위로, AOP로는 기능 단위로 모듈화를 하여 코드를 더 깔끔하게 작성할 수 있다.
+
+### PSA (Portable Service Abstraction)
+: 환경의 변화와 상관없이 일관된 방식으로 기술에 접근할 수 있는 환경을 제공하는 추상화 구조
+
+서비스 추상화(Serivce Abstraction)는 추상화 계층을 사용하여, 어떤 기술은 내부에 숨기고 개발자에게 편의성을 제공해주는 것이다. 
+그렇다면 Portable은? 휴대하기 쉬운 이라는 뜻도 있는데, 포터블 프로그램은 설치없이도 가능한 프로그램이라는 뜻이다. 즉 PSA는 환경이 변화되어도, 이를 따로 설치하거나 세팅할 필요없이 하나의 추상화로 여러 서비스에 접근가능하다는 뜻이 아닐까?
+
+PSA에 해당하는 예시로는 Spring Web MVC, Spring Transaction 등이 있다 (이에 대해서는 뒤에서 더 자세히 설명하겠다)
+
+
+## Spring Bean 이 무엇이고, Bean 의 라이프사이클과 Bean Scope에 대해 조사해요
+
+### Spring Bean
+스프링 컨테이너가 관리하는 자바 객체로, 컨테이너에 의해 Life cycle(생명 주기)도 관리된다
+
+Bean의 Life cycle은 다음과 같다
+의존성 주입 → BPP 전처리 → 초기화(@PostConstruct 등) → BPP 후처리 → 소멸(@PreDestroy 등)
