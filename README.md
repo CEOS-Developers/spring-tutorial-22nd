@@ -82,7 +82,11 @@ PSA에 해당하는 예시로는 Spring Web MVC, Spring Transaction 등이 있�
 : 스프링 컨테이너가 관리하는 자바 객체로, 컨테이너에 의해 Life cycle(생명 주기)도 관리된다
 
 Bean의 Life cycle은 다음과 같다
-의존성 주입 → BPP 전처리 → 초기화(@PostConstruct 등) → BPP 후처리 → 소멸(@PreDestroy 등)
+스프링 컨테이너 생성 → 빈 생성 → 의존관계 주입 → 콜백(초기화) @PostConstruct 등 → 사용 → 콜백(소멸전)@PreDestroy 등 → 종료
+
+✅콜백: 객체를 생성한 후, 의존관계까지 주입되었으니 사용이 가능하다고 알려주는 것
+
+Bean Scope: 빈이 존재할 수 있는 범위이다.
 
 프로젝트 규모가 커질수록, Bean을 직접 등록하는 건 어려워서 주로 어노테이션을 활용하여 등록한다.
 
@@ -99,5 +103,50 @@ Bean의 Life cycle은 다음과 같다
 어노테이션을 기반으로 할 때 Bean 등록 흐름은 다음과 같다.
 앱 시작 → Context 생성 → 구성 클래스 + 애노테이션 읽기 → 스캔/파싱 → BeanDefinition 생성 → 빈 정의 등록 → 빈 인스턴스 및 의존성 주입 → 초기화 콜백 → 빈 사용 → 종료 시 소멸 콜백
 
+`@ComponentScan`을 통해 스프링이 컴포넌트를 탐색하는 과정❓
+: `@ComponentScan`은 탐색 위치에 `@Component`가 붙은 모든 클래스를 스프링 빈으로 등록하는 어노테이션이다. 
+
+기존에는 스프링 빈을 등록할 때, 설정 정보를 담고있는 클래스(config)에 @Configuration 태그를 사용하고, 스프링 빈으로 등록할 객체에 @Bean 태그를 사용해서 생성자 형태로 의존성을 주입한다.
+그러나 이런 방법은, 등록해야할 스프링 빈의 수가 많아질수록 하나하나 등록하기 힘들며, 실수가 생길 가능성도 크다. 
+
+이러한 방법 대신 `@ComponentScan`을 설정 파일에 추가하고, 스프링 빈으로 등록할 클래스에 `@Component`를 추가하면, 스캔 대상이 되어, 스프링 빈으로 자동으로 등록한 후, 의존성 주입도 @Autowired로 해결할 수 있다.
 
 ## 🔥Spring MVC를 심층 분석해요🔥
+### MVC패턴 vs Spring MVC
+결론부터 말하자면, MVC 패턴은 소프트웨어 개발에서 역할 분리를 위해 만들어진 **디자인 패턴**이고, Spring MVC는 이 패턴을 웹 애플리케이션에 적용하여 구현한 **프레임워크**이다.
+
+### Servlet
+: 웹 애플리케이션에서 클라이언트의 요청을 처리하고, 그에 대한 응답을 생성하는 구성요소 -> 즉, 클라이언트와 HTTP 요청과 응답을 주고받는 웹 환경을 구성하는 역할을 맡은 것이다.
+
+<img width="1068" height="462" alt="image" src="https://github.com/user-attachments/assets/3eada75b-35f4-42da-be96-f06d54109146" />
+서블릿의 동작 흐름이다. 보다시피, 서블릿을 관리하는 컨테이너에서, httpRequest를 받아 HttpServletRequest, HttpServletResponse로 변환하여 우리에게 넘겨주면, 우리는 해당 요청을 처리하고 응답을 생성하는 과정만 담당하게 된다.
+
+✅Servlet Container: Java 웹 애플리케이션의 핵심 구성 요소로 Servlet의 생명 주기를 담당한다.
+
+스프링에서는 내장 스프링 컨테이너 Tomcat이 관리하는 Servlet 중, Dispatcher Servlet이 대표적이다.
+✚Tomcat : WAS(Web Application Server)라고도 하며, JSP와 Servlet을 구동하기 위한 서블릿 컨테이너 역할을 수행한다
+✚WAS : 동적 리소스를 처리하는 서버로, 기존 Web 서버는 정적 리소스만 처리가 가능하기에, Web Server는 주로 간단한 요청에 대한 일을 처리하고, WAS는 더 복잡한 로직을 처리한다.
+<img width="673" height="269" alt="image" src="https://github.com/user-attachments/assets/511a3108-6790-4f5c-a569-438ae5468f02" />
+
+
+### Dispather Servlet
+<img width="1416" height="690" alt="image" src="https://github.com/user-attachments/assets/6d7a14b7-a4ba-43b4-9ccd-3fe897e96037" />
+
+**1. 클라이언트 요청** - 사용자의 HTTP 요청이 들어옴
+
+**2. DispatcherHandler가 요청 수신** - WebHandler 인터페이스 구현체로서, 요청을 수신하고 처리 시작
+
+**3. HandlerMapping 탐색** - 등록된 HandlerMapping 중 가장 먼저 매칭되는 핸들러를 찾음
+
+**4. HandlerAdapter 실행** - 매핑된 핸들러를 실제로 실행시킬 수 있는 HandlerAdapter를 통해 호출함
+
+**5. HandlerResult 생성** - 핸들러의 실행 결과를 HandlerResult로 감쌈 (컨트롤러 리턴값 포함)
+
+**6. HandlerResultHandler 실행** - 적절한 HandlerResultHandler가 HandlerResult를 해석하고 처리 (뷰 렌더링 포함)
+
+**7. ViewResolver 처리** - 뷰 이름을 논리적으로 해석하여 실제 View 객체로 매핑함
+
+**8. 응답 View 렌더링**- View 객체가 HTML 등을 렌더링하여 클라이언트에게 최종 응답 전송
+
+
+
