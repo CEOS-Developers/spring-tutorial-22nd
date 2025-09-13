@@ -148,5 +148,7 @@ Bean Scope: 빈이 존재할 수 있는 범위이다.
 
 **8. 응답 View 렌더링**- View 객체가 HTML 등을 렌더링하여 클라이언트에게 최종 응답 전송
 
+이때, 컨트롤러로 요청을 위임하는 doDispatch메소드가 있는데, 요청에 매핑되는 HandlerMapping을 조회해서 매칭되는 핸들러를 찾은 후에, 이 요청을 처리할 HandlerAdapter를 조회하며, 조회한 HandlerAdapter를 통해 컨트롤러 메소드를 호출하여 실행한다.
 
+참고 블로그: https://jake-seo-dev.tistory.com/380
 
