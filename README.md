@@ -130,7 +130,8 @@ Bean Scope: 빈이 존재할 수 있는 범위이다.
 
 
 ### Dispather Servlet
-<img width="1416" height="690" alt="image" src="https://github.com/user-attachments/assets/6d7a14b7-a4ba-43b4-9ccd-3fe897e96037" />
+<img width="1416" height="690" alt="image" src="https://github.com/user-attachments/assets/6a153393-035d-42a7-a5a9-2a4fdda1ad30" />
+
 
 **1. 클라이언트 요청** - 사용자의 HTTP 요청이 들어옴
 
