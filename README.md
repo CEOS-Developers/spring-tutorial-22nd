@@ -127,7 +127,9 @@ Bean Scope: 빈이 존재할 수 있는 범위이다.
 ✅Servlet Container: Java 웹 애플리케이션의 핵심 구성 요소로 Servlet의 생명 주기를 담당한다.
 
 스프링에서는 내장 스프링 컨테이너 Tomcat이 관리하는 Servlet 중, Dispatcher Servlet이 대표적이다.
+
 ✚Tomcat : WAS(Web Application Server)라고도 하며, JSP와 Servlet을 구동하기 위한 서블릿 컨테이너 역할을 수행한다
+
 ✚WAS : 동적 리소스를 처리하는 서버로, 기존 Web 서버는 정적 리소스만 처리가 가능하기에, Web Server는 주로 간단한 요청에 대한 일을 처리하고, WAS는 더 복잡한 로직을 처리한다.
 <img width="673" height="269" alt="image" src="https://github.com/user-attachments/assets/511a3108-6790-4f5c-a569-438ae5468f02" />
 
