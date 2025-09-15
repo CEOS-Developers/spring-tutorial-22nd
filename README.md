@@ -312,15 +312,61 @@ public class CardPayService implements PaymentService {
 ## WAS 란?
 
 
-: Web Application Server
+: WAS에 대해서 알아보기 전에 먼저 WebServer에 대해서 알아보자.
 
-= 동적인 웹 애플리케이션 로직(JSP/Servlet, Spring MVC 같은 자바 코드)을 실행해 결과를 클라이언트에게 응답하는 서버
+### WebServer
 
-- 정적 리소스 처리
-    - HTML, CSS, JS 파일 제공
-- 동적 리소스 처리
-    - DB와 연동, 로직 수행 후 결과를 동적으로 만들어서 응답함
-- Spring Boot 내장 WAS는 Tomcat
+- 정적(Static) 리소스 처리
+    - HTML, CSS, JS, 이미지
+    - “모든 사람이 같은 페이지 열람”
+
+![image.png](attachment:aad42716-af16-4b18-ae96-e1513d0830de:image.png)
+
+- ex) Nginx, Apache, Microsoft IIS
+- “사용자에 따라 다른 페이지를 띄워줬으면 좋겠다” 는 요구 등장
+    - ex) 로그인, 쇼핑몰 장바구니
+
+### WAS(Web Application Server)
+
+- 동적(Dynamic) 리소스 처리
+
+![image.png](attachment:72470172-56d5-4020-bcb8-4cf1c77fa403:a93b0f24-0e6c-4d9a-a684-843b12768779.png)
+
+- 흐름
+    1. **클라이언트 → Web Server**
+        - 브라우저에서 요청 전송 → Raw HTTP Request Packet(메서드, 헤더, 바디 포함)
+        - ex) `GET /users/123`
+    2. **WebServer에서 요청 분류 → WAS**
+        - **정적(Static) 컨텐츠**: WebServer는 WAS까지 요청을 보내지 않고 직접 응답. 빠르고 WAS의 부담을 덜어줌.
+        - **동적(Dynamic) 컨텐츠**: 요청이 DB 조회나 복잡한 로직 처리가 필요한 동적 요청일 경우, WebServer는 이 요청을 ****WAS에게 그대로 전달.
+            - 리버스 프록시(Reverse Proxy)
+        - ex) Nginx에서 요청 분류
+    3. **WAS → Backend Framework**
+        - WAS가 HTTP Request Packet을 파싱
+        - `HttpServletRequest`/`HttpServletResponse` 객체 생성
+        - 이 객체를 Backend Framework에 전달
+        - ex) Tomcat → Spring MVC 모듈(웹 요청 처리)
+    4. **URL 라우팅**
+        - 요청된 url과 매핑되는 Controller 탐색
+        - ex) `/users/123` 요청 → 해당 경로를 처리할 컨트롤러 `UserController`
+    5. **비즈니스 로직 수행 + 결과 담기**
+        - ex) DB 조회 후 `{"id":123, "name":"Danaggero"}` 같은 데이터 반환
+    6. **Backend Framework → WAS**
+        - 결과가 담긴 Response 객체를 다시 WAS로 전달
+    7. **WAS에서 Raw Packet 변환 → WebServer**
+        - 응답 객체를 HTTP Response Packet으로 변환 (Status Code, Header, Body 조합)
+    8. **WebServer → Client**
+        - 최종적으로 브라우저는 `200 OK` 와 함께 JSON이나 HTML을 받음
+
+- 전통적인 Spring은 tomcat, jetty와 같은 WAS 필요
+- SpringBoot는 spring-boot-starter-web 패키지 안에 내장 tomcat 라이브러리 포함
+- 다이어그램
+    - WebServer = Nginx
+    - WAS = Tomcat
+    - Backend Framework = Spring MVC
+    - Server-Side = Spring Boot 애플리케이션
+
+출처: https://www.youtube.com/watch?v=M8E6vYAIuzQ&t=176s
 
 ## Dispatcher Servlet 이란?
 
